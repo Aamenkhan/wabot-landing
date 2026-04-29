@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaBot Pro – WhatsApp Business Automation</title>
+  <meta name="description" content="Automate your WhatsApp business messages. Auto-replies, product catalog, live dashboard – all in one bot." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #25D366;
+      --dark-green: #128C7E;
+      --deeper: #075E54;
+      --bg: #0a0a0a;
+      --card: #111111;
+      --border: #1e1e1e;
+      --text: #f0f0f0;
+      --muted: #888;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 5%;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--green), var(--dark-green));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--green); color: #000;
+      border: none; border-radius: 8px;
+      padding: 9px 20px; font-size: 14px; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 5% 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,211,102,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.3);
+      color: var(--green); border-radius: 20px;
+      padding: 6px 16px; font-size: 13px; font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .badge-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 76px);
+      font-weight: 900;
+      line-height: 1.08;
+      max-width: 900px;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--green), #7FFFD4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green), var(--dark-green));
+      color: #000; font-weight: 700; font-size: 15px;
+      border: none; border-radius: 10px; padding: 14px 28px;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 24px rgba(37,211,102,0.3);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,211,102,0.4); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 28px; font-size: 15px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-secondary:hover { border-color: #444; background: #111; }
+
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 60px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 800; color: var(--green); }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+
+    /* ── SECTION ── */
+    section { padding: 100px 5%; }
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--green);
+      text-align: center; margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 800; text-align: center;
+      line-height: 1.15; letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      text-align: center; color: var(--muted);
+      font-size: 16px; max-width: 560px;
+      margin: 0 auto 60px;
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(37,211,102,0.3); transform: translateY(-3px); }
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: rgba(37,211,102,0.1);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 18px;
+    }
+    .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: flex; gap: 0; max-width: 900px; margin: 0 auto; position: relative; flex-wrap: wrap; justify-content: center; }
+    .step {
+      flex: 1; min-width: 200px;
+      text-align: center; padding: 0 20px;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -8px; top: 20px;
+      font-size: 20px; color: var(--border);
+    }
+    @media (max-width: 600px) { .step:not(:last-child)::after { display: none; } }
+    .step-num {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--dark-green));
+      color: #000; font-weight: 800; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* ── PRICING ── */
+    #pricing { background: #0d0d0d; }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px; max-width: 900px; margin: 0 auto;
+    }
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      transition: transform .2s;
+    }
+    .price-card:hover { transform: translateY(-4px); }
+    .price-card.popular {
+      border-color: var(--green);
+      box-shadow: 0 0 40px rgba(37,211,102,0.15);
+    }
+    .popular-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--green); color: #000;
+      font-size: 11px; font-weight: 800;
+      padding: 4px 14px; border-radius: 20px;
+      white-space: nowrap; letter-spacing: .5px;
+    }
+    .price-name { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .price-amount { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+    .price-currency { font-size: 22px; font-weight: 700; color: var(--green); }
+    .price-num { font-size: 52px; font-weight: 900; line-height: 1; }
+    .price-per { font-size: 13px; color: var(--muted); }
+    .price-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .price-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 20px; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .price-features li { font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
+    .price-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .price-features li.no::before { content: '✕'; color: #444; }
+    .price-features li.no { color: #444; }
+    .btn-plan {
+      width: 100%; padding: 12px;
+      border-radius: 10px; font-size: 14px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      display: block; text-align: center;
+      transition: opacity .2s;
+    }
+    .btn-plan:hover { opacity: 0.85; }
+    .btn-plan.outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-plan.filled { background: linear-gradient(135deg, var(--green), var(--dark-green)); color: #000; border: none; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px; max-width: 1000px; margin: 0 auto;
+    }
+    .testi-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px;
+    }
+    .testi-stars { color: #FFD700; font-size: 14px; margin-bottom: 12px; }
+    .testi-text { font-size: 14px; color: #ccc; line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--deeper));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #000;
+    }
+    .testi-name { font-size: 13px; font-weight: 700; }
+    .testi-role { font-size: 12px; color: var(--muted); }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center; padding: 100px 5%;
+      background: linear-gradient(135deg, rgba(37,211,102,0.06), rgba(7,94,84,0.06));
+      border-top: 1px solid var(--border);
+    }
+    .cta-section h2 { font-size: clamp(28px,4vw,52px); font-weight: 900; margin-bottom: 16px; letter-spacing: -0.5px; }
+    .cta-section p { color: var(--muted); font-size: 16px; margin-bottom: 36px; }
+    .whatsapp-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #25D366; color: #000;
+      font-weight: 800; font-size: 16px;
+      border-radius: 12px; padding: 16px 32px;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(37,211,102,0.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(37,211,102,0.45); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 5%;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer .logo { font-size: 16px; }
+    footer p { font-size: 13px; color: var(--muted); }
+
+    /* ── MOCKUP ── */
+    .mockup-wrap {
+      max-width: 700px; margin: 60px auto 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .mockup-bar {
+      background: var(--darker, #0d0d0d);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #FF5F57; }
+    .dot.y { background: #FEBC2E; }
+    .dot.g { background: #28C840; }
+    .mockup-bar span { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+    .chat-window { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .bubble {
+      max-width: 75%; padding: 10px 14px;
+      border-radius: 12px; font-size: 13px; line-height: 1.5;
+    }
+    .bubble.in { background: #1e2a1e; border-radius: 0 12px 12px 12px; align-self: flex-start; }
+    .bubble.out { background: #1a263d; border-radius: 12px 0 12px 12px; align-self: flex-end; color: #ccc; }
+    .bubble-time { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: right; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">💬</div>
+    WaBot Pro
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Get Started →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    WhatsApp Business Automation
+  </div>
+  <h1>Automate Your Business<br/>on <span>WhatsApp</span></h1>
+  <p>Auto-replies, product catalog, live dashboard — your 24/7 WhatsApp assistant that never sleeps, never misses a customer.</p>
+  <div class="hero-btns">
+    <a href="#pricing" class="btn-primary">Start Free Trial →</a>
+    <a href="#how" class="btn-secondary">See How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always Online</div></div>
+    <div class="stat"><div class="stat-num">< 1s</div><div class="stat-label">Reply Speed</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Messages / Day</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Uptime</div></div>
+  </div>
+
+  <!-- Chat Mockup -->
+  <div class="mockup-wrap">
+    <div class="mockup-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span>WhatsApp Bot – Live Preview</span>
+    </div>
+    <div class="chat-window">
+      <div class="bubble in">
+        hi
+        <div class="bubble-time">10:01 AM</div>
+      </div>
+      <div class="bubble out">
+        Hello 👋 Kaise madad kar sakta hoon?<br/>
+        Type <b>product</b> to see our catalog or <b>help</b> for all commands.
+        <div class="bubble-time">10:01 AM ✓✓</div>
+      </div>
+      <div class="bubble in">
+        product
+        <div class="bubble-time">10:02 AM</div>
+      </div>
+      <div class="bubble out">
+        🛒 <b>Our Products:</b><br/>
+        🥛 Milk – ₹50<br/>
+        🧀 Paneer – ₹300<br/>
+        👕 Shirt – ₹500<br/><br/>
+        Reply with item name to order!
+        <div class="bubble-time">10:02 AM ✓✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Everything You Need to<br/>Run on WhatsApp</h2>
+  <p class="section-sub">From automated replies to a live dashboard — WaBot Pro handles it all so you can focus on your business.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Instant Auto-Replies</h3>
+      <p>Custom keyword-based replies. Customer types "price" → they get your price list instantly. No delays, no missed messages.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛒</div>
+      <h3>Product Catalog</h3>
+      <p>Send your entire product list with prices on demand. Update anytime from your dashboard — no coding needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Live Dashboard</h3>
+      <p>See every incoming message in real time. Send messages to any number directly from your browser dashboard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">☁️</div>
+      <h3>Cloud Hosted</h3>
+      <p>Runs 24/7 on the cloud. No need to keep your laptop on. Your bot is always online, even when you're sleeping.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Secure Session</h3>
+      <p>Your WhatsApp session is encrypted and stored securely in MongoDB. One-time QR scan — stays connected forever.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>Fully Customizable</h3>
+      <p>Custom greetings, commands, product list, business hours — everything tailored to your brand and business.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:#0d0d0d">
+  <div class="section-label">Process</div>
+  <h2 class="section-title">Up and Running in 3 Steps</h2>
+  <p class="section-sub">No technical knowledge required. We set everything up for you.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Choose a Plan</h4>
+      <p>Pick the plan that fits your business size and needs.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>We Set It Up</h4>
+      <p>We configure your bot with your products and custom replies.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Scan QR & Go Live</h4>
+      <p>Scan once with WhatsApp and your bot is live 24/7.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple, Honest Pricing</h2>
+  <p class="section-sub">No hidden fees. Cancel anytime. Start free and upgrade when you're ready.</p>
+  <div class="pricing-grid">
+
+    <!-- Starter -->
+    <div class="price-card">
+      <div class="price-name">Starter</div>
+      <div class="price-amount">
+        <span class="price-currency">₹</span>
+        <span class="price-num">499</span>
+        <span class="price-per">/month</span>
+      </div>
+      <p class="price-desc">Perfect for small shops & freelancers</p>
+      <hr class="price-divider" />
+      <ul class="price-features">
+        <li>Auto-reply (up to 5 keywords)</li>
+        <li>Product catalog (up to 10 items)</li>
+        <li>Live message dashboard</li>
+        <li>Cloud hosted 24/7</li>
+        <li class="no">Custom branding</li>
+        <li class="no">Priority support</li>
+      </ul>
+      <a href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20Starter%20plan" class="btn-plan outline" target="_blank">Get Started</a>
+    </div>
+
+    <!-- Pro (Popular) -->
+    <div class="price-card popular">
+      <div class="popular-badge">⭐ MOST POPULAR</div>
+      <div class="price-name">Pro</div>
+      <div class="price-amount">
+        <span class="price-currency">₹</span>
+        <span class="price-num">999</span>
+        <span class="price-per">/month</span>
+      </div>
+      <p class="price-desc">For growing businesses with more needs</p>
+      <hr class="price-divider" />
+      <ul class="price-features">
+        <li>Unlimited auto-reply keywords</li>
+        <li>Product catalog (unlimited items)</li>
+        <li>Live message dashboard</li>
+        <li>Cloud hosted 24/7</li>
+        <li>Custom branding & greeting</li>
+        <li>Priority WhatsApp support</li>
+      </ul>
+      <a href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20Pro%20plan" class="btn-plan filled" target="_blank">Get Pro Now</a>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="price-card">
+      <div class="price-name">Enterprise</div>
+      <div class="price-amount">
+        <span class="price-currency">₹</span>
+        <span class="price-num">1999</span>
+        <span class="price-per">/month</span>
+      </div>
+      <p class="price-desc">Full custom solution for large businesses</p>
+      <hr class="price-divider" />
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>Custom AI-powered replies</li>
+        <li>Multiple WhatsApp numbers</li>
+        <li>Order management integration</li>
+        <li>Dedicated account manager</li>
+        <li>SLA & uptime guarantee</li>
+      </ul>
+      <a href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20Enterprise%20plan" class="btn-plan outline" target="_blank">Contact Us</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:#0d0d0d">
+  <div class="section-label">Reviews</div>
+  <h2 class="section-title">Customers Love It</h2>
+  <p class="section-sub">Real businesses, real results.</p>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Hamare customers ko ab turant reply milta hai. Sales 40% badh gayi sirf pehle mahine mein!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">R</div>
+        <div><div class="testi-name">Rahul Sharma</div><div class="testi-role">Kirana Store Owner, Delhi</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Setup super easy tha. Ek baar QR scan kiya aur bot 24/7 chal raha hai. No more missed messages!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">P</div>
+        <div><div class="testi-name">Priya Patel</div><div class="testi-role">Boutique Owner, Mumbai</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Best investment for my business. Dashboard pe sab dikh raha hai. Bahut professional lagta hai."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div><div class="testi-name">Arjun Mehta</div><div class="testi-role">Electronics Shop, Pune</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Ready to Automate<br/>Your Business?</h2>
+  <p>Join hundreds of businesses already running on WaBot Pro. Setup in under 10 minutes.</p>
+  <a href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20to%20set%20up%20WhatsApp%20Bot%20for%20my%20business" class="whatsapp-btn" target="_blank">
+    💬 Chat with Us on WhatsApp
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">
+    <div class="logo-icon">💬</div>
+    WaBot Pro
+  </div>
+  <p>© 2026 WaBot Pro. All rights reserved.</p>
+  <p style="font-size:13px;color:var(--muted)">Made in India 🇮🇳</p>
+</footer>
+
+</body>
+</html>
